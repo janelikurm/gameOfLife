@@ -8,6 +8,8 @@
     let nextGrid = []
     let ALIVE = 'cell alive'
     let DEAD = 'cell dead'
+    let automaticStarted = false
+    let automaticStartStop = 'Start'
 
     onMount(async () => {
         await createGameField()
@@ -50,7 +52,6 @@
         } else {
             this.setAttribute('class', ALIVE)
             grid[row][col] = 1
-
         }
     }
 
@@ -109,7 +110,6 @@
         if (col + 1 < cols) {
             if (grid[row][col + 1] === 1) count++
         }
-        console.log(count)
         return count
     }
 
@@ -135,12 +135,41 @@
         }
     }
 
-    function clearGameField() {
-        for (const elementsByTagNameElement of document.getElementsByTagName('td')) {
-            elementsByTagNameElement.setAttribute('class', DEAD)
-            createGrids()
+    async function clearGameField() {
+        for (let i = 0; i < rows; i++) {
+            for (let j = 0; j < cols; j++) {
+                document.getElementById(i + '_' + j).setAttribute('class', DEAD)
+            }
+        }
+        await createGrids()
+    }
+
+    function automaticNextGeneration() {
+        if (!automaticStarted) {
+            automaticStarted = true
+            automaticStartStop = 'Stop'
+            for (let i = 0; i < 10000; i++) {
+                delay(i + 1)
+            }
+        } else if (automaticStarted) {
+            stopGame()
         }
     }
+
+    function delay(i) {
+        setTimeout(() => {
+            createNextGeneration()
+        }, i * 250)
+    }
+
+
+    function stopGame() {
+        automaticStarted = false
+        automaticStartStop = 'Start'
+        clearGameField()
+
+    }
+
 
 </script>
 <main>
@@ -150,7 +179,7 @@
         </h1>
         <div>
             <button class="button" on:click={createNextGeneration}>Next generation</button>
-<!--            <button class="button">End game</button>-->
+            <button class="button" on:click={automaticNextGeneration}>{automaticStartStop}</button>
             <button class="button" on:click={clearGameField}>Clear</button>
         </div>
 
@@ -168,6 +197,7 @@
 
     table {
         border: 1px solid black;
+        margin: auto;
     }
 
     :global(.cell) {
