@@ -8,8 +8,7 @@
     let nextGrid = []
     let ALIVE = 'cell alive'
     let DEAD = 'cell dead'
-    let automaticStarted = false
-    let automaticStartStop = 'Start'
+    let intervalId
 
     onMount(async () => {
         await createGameField()
@@ -136,6 +135,7 @@
     }
 
     async function clearGameField() {
+        clearInterval(intervalId)
         for (let i = 0; i < rows; i++) {
             for (let j = 0; j < cols; j++) {
                 document.getElementById(i + '_' + j).setAttribute('class', DEAD)
@@ -145,29 +145,12 @@
     }
 
     function automaticNextGeneration() {
-        if (!automaticStarted) {
-            automaticStarted = true
-            automaticStartStop = 'Stop'
-            for (let i = 0; i < 10000; i++) {
-                delay(i + 1)
-            }
-        } else if (automaticStarted) {
-            stopGame()
-        }
+        clearInterval(intervalId)
+        intervalId = setInterval(createNextGeneration, 250);
     }
-
-    function delay(i) {
-        setTimeout(() => {
-            createNextGeneration()
-        }, i * 250)
-    }
-
 
     function stopGame() {
-        automaticStarted = false
-        automaticStartStop = 'Start'
-        clearGameField()
-
+        clearInterval(intervalId)
     }
 
 
@@ -175,11 +158,12 @@
 <main>
     <div>
         <h1>
-            Game of life
+            Game of Life
         </h1>
         <div>
             <button class="button" on:click={createNextGeneration}>Next generation</button>
-            <button class="button" on:click={automaticNextGeneration}>{automaticStartStop}</button>
+            <button class="button" on:click={automaticNextGeneration}>Start</button>
+            <button class="button" on:click={stopGame}>Stop</button>
             <button class="button" on:click={clearGameField}>Clear</button>
         </div>
 

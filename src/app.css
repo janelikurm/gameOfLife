@@ -56,14 +56,12 @@ button {
   font-family: inherit;
   background-color: #ffffff;
   cursor: pointer;
-  transition: border-color 0.25s;
 }
 button:hover {
   border-color: #eaa9a9;
 }
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+button:active {
+ background-color: #eaa9a9;
 }
 
 
