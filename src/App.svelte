@@ -9,6 +9,7 @@
     let ALIVE = 'cell alive'
     let DEAD = 'cell dead'
     let intervalId
+    let gameOn = false
     let speed
 
     onMount(async () => {
@@ -67,7 +68,7 @@
 
 
     function setDeadOrAlive(row, col) {
-        let numOfNeighbours = countNeighboursVol2(row, col)
+        let numOfNeighbours = countNeighbours(row, col)
         if (grid[row][col] === 1) {
             if (numOfNeighbours === 2 || numOfNeighbours === 3) {
                 nextGrid[row][col] = 1
@@ -84,35 +85,6 @@
     }
 
     function countNeighbours(row, col) {
-        let count = 0;
-        if (row - 1 >= 0) {
-            if (grid[row - 1][col] === 1) count++
-        }
-        if (row - 1 >= 0 && col - 1 >= 0) {
-            if (grid[row - 1][col - 1] === 1) count++
-        }
-        if (row - 1 >= 0 && col + 1 < cols) {
-            if (grid[row - 1][col + 1] === 1) count++
-        }
-        if (col - 1 >= 0) {
-            if (grid[row][col - 1] === 1) count++
-        }
-        if (row + 1 < rows && col - 1 >= 0) {
-            if (grid[row + 1][col - 1] === 1) count++
-        }
-        if (row + 1 < rows) {
-            if (grid[row + 1][col] === 1) count++
-        }
-        if (row + 1 < rows && col + 1 < cols) {
-            if (grid[row + 1][col + 1] === 1) count++
-        }
-        if (col + 1 < cols) {
-            if (grid[row][col + 1] === 1) count++
-        }
-        return count
-    }
-
-    function countNeighboursVol2(row, col) {
         let count = 0
         for (let i = row - 1; i <= row + 1; i++) {
             for (let j = col - 1; j <= col + 1; j++) {
@@ -168,8 +140,10 @@
     }
 
     async function changeSpeed() {
-        await stopGame()
-        automaticNextGeneration()
+        if (gameOn) {
+            await stopGame()
+            automaticNextGeneration()
+        }
     }
 
     function generateRandomField() {
@@ -192,8 +166,8 @@
             Game of Life
         </h1>
         <div class="button-row1">
-            <button class="button" on:click={automaticNextGeneration}>Start</button>
-            <button class="button" on:click={stopGame}>Stop</button>
+            <button class="button" on:click={() => gameOn = true} on:click={automaticNextGeneration}>Start</button>
+            <button class="button" on:click={() => gameOn = false} on:click={stopGame}>Stop</button>
             <button class="button" on:click={clearGameField}>Clear</button>
         </div>
 
@@ -218,12 +192,13 @@
     .button-row1 {
         display: flex;
         justify-content: center;
+        margin: 0 2em 0;
     }
 
     .button-row2 {
         display: flex;
         justify-content: center;
-        margin-bottom: 0.8em;
+        margin: 0 2em 0.8em;
 
     }
 
