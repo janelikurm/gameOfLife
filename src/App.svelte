@@ -2,13 +2,14 @@
 
     import {onMount} from 'svelte';
 
-    let rows = 20
-    let cols = 20
+    let rows = 25
+    let cols = 25
     let grid = []
     let nextGrid = []
     let ALIVE = 'cell alive'
     let DEAD = 'cell dead'
     let intervalId
+    let speed
 
     onMount(async () => {
         await createGameField()
@@ -66,7 +67,7 @@
 
 
     function setDeadOrAlive(row, col) {
-        let numOfNeighbours = countNeighbours(row, col)
+        let numOfNeighbours = countNeighboursVol2(row, col)
         if (grid[row][col] === 1) {
             if (numOfNeighbours === 2 || numOfNeighbours === 3) {
                 nextGrid[row][col] = 1
@@ -83,7 +84,6 @@
     }
 
     function countNeighbours(row, col) {
-
         let count = 0;
         if (row - 1 >= 0) {
             if (grid[row - 1][col] === 1) count++
@@ -108,6 +108,19 @@
         }
         if (col + 1 < cols) {
             if (grid[row][col + 1] === 1) count++
+        }
+        return count
+    }
+
+    function countNeighboursVol2(row, col) {
+        let count = 0
+        for (let i = row - 1; i <= row + 1; i++) {
+            for (let j = col - 1; j <= col + 1; j++) {
+                if (i === row && j === col) continue
+                if (i >= 0 && i < rows && j >= 0 && j < cols && grid[i][j] === 1) {
+                    count++
+                }
+            }
         }
         return count
     }
@@ -146,13 +159,31 @@
 
     function automaticNextGeneration() {
         clearInterval(intervalId)
-        intervalId = setInterval(createNextGeneration, 250);
+        speed = document.getElementById('customRange').value
+        intervalId = setInterval(createNextGeneration, speed)
     }
 
     function stopGame() {
         clearInterval(intervalId)
     }
 
+    async function changeSpeed() {
+        await stopGame()
+        automaticNextGeneration()
+    }
+
+    function generateRandomField() {
+        for (let i = 0; i < rows; i++) {
+            for (let j = 0; j < cols; j++) {
+                let isAlive = Math.round(Math.random());
+                if (isAlive === 1) {
+                    let cell = document.getElementById(i + '_' + j)
+                    cell.setAttribute('class', ALIVE)
+                    grid[i][j] = 1
+                }
+            }
+        }
+    }
 
 </script>
 <main>
@@ -160,28 +191,49 @@
         <h1>
             Game of Life
         </h1>
-        <div>
-            <button class="button" on:click={createNextGeneration}>Next generation</button>
+        <div class="button-row1">
             <button class="button" on:click={automaticNextGeneration}>Start</button>
             <button class="button" on:click={stopGame}>Stop</button>
             <button class="button" on:click={clearGameField}>Clear</button>
         </div>
 
-        <div>
-            <table id="gameField" style="border: 1px solid black">
-
-            </table>
-
+        <div class="button-row2">
+            <button class="button" on:click={createNextGeneration}>Next generation</button>
+            <button class="button" on:click={generateRandomField}>Random</button>
         </div>
+
+
+        <table id="gameField" style="border: 1px solid black"></table>
+
+        <label for="customRange" class="form-label">Speed</label>
+        <input on:change={changeSpeed} type="range" id="customRange" min="100" max="1000" value="550">
+
     </div>
 
+    <div class="footer"></div>
 
 </main>
 <style>
 
+    .button-row1 {
+        display: flex;
+        justify-content: center;
+    }
+
+    .button-row2 {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 0.8em;
+
+    }
+
+    label {
+        display: block;
+    }
+
     table {
         border: 1px solid black;
-        margin: auto;
+        margin: auto auto 20px;
     }
 
     :global(.cell) {
@@ -199,10 +251,6 @@
         background-color: #f38282;
     }
 
-    div {
-        padding: 10px;
-    }
-
     main {
         display: flex;
         justify-content: center;
@@ -212,6 +260,10 @@
 
     .button:hover {
         filter: drop-shadow(0 0 2em #eaa9a9);
+    }
+
+    .footer {
+        padding-bottom: 50px;
     }
 
 </style>
