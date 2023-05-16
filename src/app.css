@@ -34,6 +34,7 @@ body {
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+  margin: 50px 0 25px 0
 }
 
 .card {
@@ -62,7 +63,9 @@ button {
 }
 button:hover {
   border-color: #eaa9a9;
+  filter: drop-shadow(0 0 2em #eaa9a9);
 }
+
 button:active {
  background-color: #eaa9a9;
 }
@@ -104,4 +107,18 @@ input[type=range]::-webkit-slider-thumb {
   background-color: #fff;
   border-radius: 20%;
   border: 2px solid #333333;
+}
+
+
+.custom-select {
+  position: relative;
+  margin: 1em;
+  border-radius: 3px;
+  width: 130px;
+  height: 25px;
+  text-align: center;
+  border-color: #adacac;
+  font: inherit;
+  font-size: 1em
+
 }
