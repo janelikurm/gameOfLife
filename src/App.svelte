@@ -2,6 +2,14 @@
 
     import {onMount} from 'svelte';
 
+    let patterns = [
+        {id: 1, text: `--Patterns--`},
+        {id: 2, text: `Cloverleaf`},
+        {id: 3, text: `something`},
+
+    ];
+
+    let selected;
     let rows = 25
     let cols = 25
     let grid = []
@@ -11,6 +19,7 @@
     let intervalId
     let gameOn = false
     let speed
+
 
     onMount(async () => {
         await createGameField()
@@ -159,6 +168,76 @@
         }
     }
 
+    async function cloverleaf() {
+        await clearGameField()
+        grid[8][11] = 1
+        grid[8][13] = 1
+        grid[9][9] = 1
+        grid[9][10] = 1
+        grid[9][11] = 1
+        grid[9][13] = 1
+        grid[9][14] = 1
+        grid[9][15] = 1
+        grid[10][8] = 1
+        grid[10][12] = 1
+        grid[10][16] = 1
+        grid[11][8] = 1
+        grid[11][10] = 1
+        grid[11][14] = 1
+        grid[11][16] = 1
+        grid[12][9] = 1
+        grid[12][10] = 1
+        grid[12][12] = 1
+        grid[12][14] = 1
+        grid[12][15] = 1
+        grid[14][9] = 1
+        grid[14][10] = 1
+        grid[14][12] = 1
+        grid[14][14] = 1
+        grid[14][15] = 1
+        grid[15][8] = 1
+        grid[15][10] = 1
+        grid[15][14] = 1
+        grid[15][16] = 1
+        grid[16][8] = 1
+        grid[16][12] = 1
+        grid[16][16] = 1
+        grid[17][9] = 1
+        grid[17][10] = 1
+        grid[17][11] = 1
+        grid[17][13] = 1
+        grid[17][14] = 1
+        grid[17][15] = 1
+        grid[18][11] = 1
+        grid[18][13] = 1
+        await updateView()
+    }
+
+    async function beacon() {
+        await clearGameField()
+        grid[10][11] = 1;
+        grid[10][12] = 1;
+        grid[11][11] = 1;
+        grid[12][14] = 1;
+        grid[13][13] = 1;
+        grid[13][14] = 1;
+        await updateView()
+    }
+
+    function handleSelect() {
+        switch (selected) {
+            case '--Patterns--':
+                clearGameField()
+                break
+            case 'Cloverleaf':
+                cloverleaf()
+                break
+            case 'Beacon':
+                beacon()
+                break
+        }
+    }
+
 </script>
 <main>
     <div>
@@ -177,17 +256,37 @@
         </div>
 
 
-        <table id="gameField" style="border: 1px solid black"></table>
+        <table id="gameField"></table>
 
         <label for="customRange" class="form-label">Speed</label>
         <input on:change={changeSpeed} type="range" id="customRange" min="100" max="1000" value="550">
 
-    </div>
+        <div>
+            <select class="custom-select" bind:value={selected} on:change={handleSelect}>
+                <option selected>--Patterns--</option>
+                <option>Cloverleaf</option>
+                <option>Beacon</option>
+            </select>
 
+        </div>
+
+
+    </div>
     <div class="footer"></div>
 
 </main>
 <style>
+
+
+    .custom-select {
+        position: relative;
+        margin: 1em;
+        border-radius: 3px;
+        width: 130px;
+        height: 25px;
+        text-align: center;
+
+    }
 
     .button-row1 {
         display: flex;
@@ -207,14 +306,14 @@
     }
 
     table {
-        border: 1px solid black;
         margin: auto auto 20px;
+        border: 1px solid #adacac;
     }
 
     :global(.cell) {
         width: 10px;
         height: 10px;
-        border: 1px solid black;
+        border: 1px solid #adacac;
         border-radius: 3px;
     }
 
