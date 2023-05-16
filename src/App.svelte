@@ -90,8 +90,12 @@
         for (let i = row - 1; i <= row + 1; i++) {
             for (let j = col - 1; j <= col + 1; j++) {
                 if (i === row && j === col) continue
-                if (i >= 0 && i < rows && j >= 0 && j < cols && grid[i][j] === 1) {
-                    count++
+
+                let rowIndex = (i + rows) % rows;
+                let colIndex = (j + cols) % cols;
+
+                if (grid[rowIndex][colIndex] === 1) {
+                    count++;
                 }
             }
         }
